@@ -8,7 +8,7 @@ class BusDaemon
 
   def initialize
     db = Sequel.connect(
-      :adapter=>'postgres', :host=>'localhost', :database=>'bus', 
+      :adapter=>'postgres', :host=>'localhost', :database=>'bus',
       :user=>'admin', :password=>ENV['DATABASE_PASSWORD'])
     @locations = db[:locations]
     log
@@ -32,8 +32,10 @@ class BusDaemon
         r = @locations.insert(hash)
       end
       #@log.info "recorded"
-    rescue 
-      @log.error "Rescued. get: #{rows}"
+      puts 'recorded'
+    rescue => e
+      #puts e
+      @log.error "error: #{e}"
     end
   end
 
@@ -51,8 +53,10 @@ class BusDaemon
   # get data from trimet
   #
   def get
-    url = "http://developer.trimet.org/ws/v2/vehicles?appid=#{ENV['TRIMET_APP_ID']}"
-    response = Unirest.get( url )
+    url = "http://developer.trimet.org/ws/v2/vehicles"
+    params = { :appid => ENV['TRIMET_APP_ID'],
+               :since => (Time.now.to_i - 15) *1000 }
+    response = Unirest.get( url, parameters: params )
     if response.code > 200
       # if not a 200 throw the error
       halt response.code, {'Content-Type' => 'text/json'}, response.body.to_s
@@ -68,3 +72,4 @@ class BusDaemon
   end
 
 end
+

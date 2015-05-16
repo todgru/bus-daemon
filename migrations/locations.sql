@@ -18,6 +18,7 @@ SET default_with_oids = false;
 --
 -- Name: locations; Type: TABLE; Schema: public; Owner: admin; Tablespace: 
 --
+ALTER TABLE locations RENAME TO locationsold;
 
 CREATE TABLE locations (
     id integer NOT NULL,
@@ -80,7 +81,7 @@ ALTER SEQUENCE locations_id_seq OWNED BY locations.id;
 
 ALTER TABLE ONLY locations ALTER COLUMN id SET DEFAULT nextval('locations_id_seq'::regclass);
 
-
+ALTER SEQUENCE locations_id_seq RESTART WITH 1;
 --
 -- PostgreSQL database dump complete
 --
